@@ -1,0 +1,87 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+                name="employee"
+                type="app.shimi.com.employeelist.model.dataModel.Employee" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_margin="10dp">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name:"
+                android:padding="8dp"
+                android:textColor="@android:color/background_dark"
+                android:textSize="16sp" />
+
+        <TextView
+                android:id="@+id/employee_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_marginStart="60dp"
+                android:text="@{employee.employee_name}"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp" />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Salery:"
+                android:padding="8dp"
+                android:layout_marginTop="25dp"
+                android:textColor="@android:color/background_dark"
+                android:textSize="16sp" />
+
+        <TextView
+                android:id="@+id/employee_salary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="25dp"
+                android:padding="8dp"
+                android:text="@{employee.employee_salary}"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp" />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Age:"
+                android:padding="8dp"
+                android:layout_marginTop="50dp"
+                android:textColor="@android:color/background_dark"
+                android:textSize="16sp" />
+
+        <TextView
+                android:id="@+id/employee_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="60dp"
+                android:layout_marginTop="50dp"
+                android:padding="8dp"
+                android:text="@{employee.employee_age}"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp" />
+
+        <ImageButton
+                android:id="@+id/deleteItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="5dp"
+                android:padding="10dp"
+                android:src="@android:drawable/ic_menu_delete" />
+
+    </androidx.cardview.widget.CardView>
+
+</layout>
