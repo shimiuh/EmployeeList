@@ -23,10 +23,10 @@ data class Employee(
 
 @BindingAdapter("android:text")
 fun setText(view: TextView, value: Int) {
-    view.text = Integer.toString(value)
+    view.text = value.toString()
 }
 
 @InverseBindingAdapter(attribute = "android:text")
 fun getText(view: TextView): Int {
-    return Integer.parseInt(view.text.toString())
+    return view.text.toString().toIntOrNull() ?: 0
 }

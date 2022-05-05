@@ -47,7 +47,7 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
 
     private fun initObserver() {
         employeeViewModel = activity?.let { ViewModelProviders.of(it).get(EmployeeListViewModel::class.java) }!!
-        employeeViewModel.getEmployeeList().observe(this, Observer {
+        employeeViewModel.getEmployeeList().observe(viewLifecycleOwner, Observer {
             updateData(it)
         })
     }
@@ -57,7 +57,6 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
         mItemAnimation.animation.reset()
         employee_list.layoutAnimation = mItemAnimation
         employeeListAdapter.setEmployeeList(list)
-        employeeListAdapter.notifyDataSetChanged()
         employee_list.scheduleLayoutAnimation()
         swipeRefreshList.isRefreshing = false
         view?.let { it1 -> Snackbar.make(it1, "Employee list updated", Snackbar.LENGTH_LONG).show() }

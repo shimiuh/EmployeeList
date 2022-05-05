@@ -9,8 +9,6 @@
         tools:showIn="@layout/activity_main"
         tools:context=".view.EmployeeListFragment">
 
-
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshList"
             android:layout_width="match_parent"

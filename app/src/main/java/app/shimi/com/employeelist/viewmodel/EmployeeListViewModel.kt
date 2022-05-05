@@ -1,5 +1,6 @@
 package app.shimi.com.employeelist.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,7 +25,9 @@ class EmployeeListViewModel : ViewModel() {
     fun loadEmployees() {
         // Do an asynchronous operation to fetch Employees and post value.
         //should load from web and db with call getEmployees but api dos not support new Employees list
-        App.getRepository().getEmployeesFromDb().subscribeOn(Schedulers.io()).subscribe {
+        App.getRepository().getEmployeesFromDb().doOnError {
+
+        }.subscribeOn(Schedulers.io()).subscribe {
             employees?.postValue(it)
         }
 
@@ -32,14 +35,16 @@ class EmployeeListViewModel : ViewModel() {
 
     fun createEmployee(name: String, salary: String, age: String) {
         // Do an asynchronous operation to create Employee and post value.
-        App.getRepository().createEmployee(name, salary, age).subscribeOn(Schedulers.io()).subscribe {
+        App.getRepository().createEmployee(name, salary, age).subscribeOn(Schedulers.io()).subscribe( {
             loadEmployees()
-        }
+        },{ e -> Log.d("TAG", "onError ${e.localizedMessage}") })
     }
 
     fun editEmployee(employee: Employee) {
         // Do an asynchronous operation to edit Employee and post value.
-        App.getRepository().editEmployee(employee).subscribeOn(Schedulers.io()).subscribe {
+        App.getRepository().editEmployee(employee).doOnError {
+
+        }.subscribeOn(Schedulers.io()).subscribe {
             loadEmployees()
         }
 
@@ -47,7 +52,9 @@ class EmployeeListViewModel : ViewModel() {
 
     fun deleteEmployee(employee: Employee) {
         // Do an asynchronous operation to remove Employee and post value.
-        App.getRepository().deleteEmployee(employee).subscribeOn(Schedulers.io()).subscribe {
+        App.getRepository().deleteEmployee(employee).doOnError {
+
+        }.subscribeOn(Schedulers.io()).subscribe {
             loadEmployees()
         }
     }

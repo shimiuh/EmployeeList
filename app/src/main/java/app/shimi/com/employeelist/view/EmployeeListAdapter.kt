@@ -33,6 +33,7 @@ class EmployeeListAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<Em
     fun setEmployeeList(employeeList: List<Employee>?) {
         if(employeeList != null) {
             this.employeeList = employeeList
+            notifyDataSetChanged()
         }
     }
 

@@ -37,7 +37,7 @@ class App : Application() {
         sRetrofit = Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(GsonBuilder().setLenient().create()))
-                .baseUrl("http://dummy.restapiexample.com/api/v1/")
+                .baseUrl("https://dummy.restapiexample.com/api/v1/")
                 .build()
 
         sEmployeeApi = sRetrofit.create(EmployeeApi::class.java)
