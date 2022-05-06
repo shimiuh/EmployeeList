@@ -1,4 +1,4 @@
-package app.shimi.com.employeelist.db
+package app.shimi.com.employeelist.data.persistence.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

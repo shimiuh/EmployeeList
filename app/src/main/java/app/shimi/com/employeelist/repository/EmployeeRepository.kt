@@ -2,69 +2,59 @@ package app.shimi.com.employeelist.repository
 
 import android.util.Log
 import app.shimi.com.employeelist.model.dataModel.Employee
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
-import app.shimi.com.employeelist.db.EmployeeDao
+import app.shimi.com.employeelist.data.persistence.db.EmployeeDao
 import app.shimi.com.employeelist.model.networkModel.EmployeeCall
-import app.shimi.com.employeelist.model.networkModel.EmployeeResult
 import com.google.gson.JsonObject
+import kotlinx.coroutines.flow.*
 
-class EmployeeRepository(val employeeApi: EmployeeApi, val employeeDao: EmployeeDao) {
 
-    fun getEmployees(): Observable<List<Employee>> {
-        return Observable.concatArray(
-                getEmployeesFromDb(),
-                getEmployeesFromApi())
+class EmployeeRepository(private val employeeApi: EmployeeApi, val employeeDao: EmployeeDao) {
+
+    suspend fun getEmployees(): Flow<List<Employee>> {
+        return merge(getEmployeesFromDb(), getEmployeesFromApi())
     }
 
-    fun createEmployee(name: String, salary: String, age: String): Observable<EmployeeResult> {
-        return createEmployeeFromApi(name, salary, age)
+    suspend fun createEmployee(name: String, salary: String, age: String){
+        return createEmployeeOnRemoteApi(name, salary, age)
     }
 
-    fun editEmployee(employee: Employee): Observable<EmployeeCall> {
+    suspend fun editEmployee(employee: Employee): Flow<EmployeeCall> {
         return employeeApi.updateEmployee(employee.id, employee)
-            .doOnNext {
-                employeeDao.update(employee)
-            }
     }
 
-    fun deleteEmployee(employee: Employee): Observable<JsonObject> {
+    suspend fun deleteEmployee(employee: Employee): Flow<JsonObject> {
         return employeeApi.deleteEmployee(employee.id)
-            .doOnNext {
-                employeeDao.delete(employee)
-            }
     }
 
-
-    fun getEmployeesFromDb(): Observable<List<Employee>> {
+    private suspend fun getEmployeesFromDb(): Flow<List<Employee>> {
         return employeeDao.getEmployees()
-                .toObservable()
-                .doOnNext {
-                }
     }
 
-    fun createEmployeeFromApi(name: String, salary: String, age: String): Observable<EmployeeResult> {
-        return employeeApi.createEmployee(EmployeeCall(name, salary, age))
-            .doOnNext {
-                employeeDao.insert(Employee(it.id, it.name, it.age, it.salary))
+    private suspend fun createEmployeeOnRemoteApi(name: String, salary: String, age: String) {
+        employeeApi.createEmployee(EmployeeCall(name, salary, age)).let {
+            if(it.isSuccess()){
+                Log.d("TAG","in createEmployeeOnRemoteApi ${it.data} ${it.data!!.toEmployee()}")
+                employeeDao.insert(it.data!!.toEmployee())
             }
+        }
     }
 
-    fun getEmployeesFromApi(): Observable<List<Employee>> {
-        return employeeApi.getEmployees()
-            .doOnNext {
-                storeEmployeesInDb(it)
-            }.doOnError{
-
-            }
-    }
-
-    fun storeEmployeesInDb(employees: List<Employee>) {
-        Observable.fromCallable { employeeDao.insertAll(employees) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe {
+    private suspend fun getEmployeesFromApi(): Flow<List<Employee>> {
+        return flow {
+            employeeApi.getEmployees().let {
+                var res = listOf<Employee>()
+                if(it.isSuccess()){
+                    res = it.data.map {employee -> employee.toEmployee()}
+                    storeEmployeesInDb(it.data.map {employee -> employee.toEmployee()})
                 }
+                emit(res)
+            }
+        }
+
+    }
+
+    private suspend fun storeEmployeesInDb(employees: List<Employee>) {
+        employeeDao.insertAll(employees)
     }
 
 }

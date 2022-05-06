@@ -28,7 +28,7 @@ class EmployeeListAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<Em
         holder.bind(employee)
     }
 
-    override fun getItemCount() = employeeList.size
+    override fun getItemCount() = employeeList.size -1
 
     fun setEmployeeList(employeeList: List<Employee>?) {
         if(employeeList != null) {
@@ -50,10 +50,10 @@ class EmployeeHolder (
 
     init {
         viewDataBinding.root.setOnClickListener(View.OnClickListener {
-            listener.onClick(it, employeeList[adapterPosition] )
+            listener.onClick(it, employeeList[bindingAdapterPosition] )
         })
         this.viewDataBinding.root.findViewById<View>(R.id.deleteItem).setOnClickListener {
-            listener.onRemoveItem( employeeList[adapterPosition] )
+            listener.onRemoveItem( employeeList[bindingAdapterPosition] )
         }
     }
 

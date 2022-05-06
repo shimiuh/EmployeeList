@@ -1,24 +1,31 @@
 package app.shimi.com.employeelist.view
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import app.shimi.com.employeelist.App
 import app.shimi.com.employeelist.R
+import app.shimi.com.employeelist.data.persistence.db.EmployeeDao
 import app.shimi.com.employeelist.model.dataModel.Employee
 import app.shimi.com.employeelist.viewmodel.EmployeeListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.employee_fragment.*
 import kotlinx.android.synthetic.main.item_employee.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class EmployeeFragment : androidx.fragment.app.Fragment() {
+@AndroidEntryPoint
+class EmployeeFragment : Fragment() {
 
-
-    private lateinit var employeeViewModel: EmployeeListViewModel
+    @Inject lateinit var employeeDao: EmployeeDao
+    private val employeeViewModel: EmployeeListViewModel by viewModels()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.employee_fragment, container, false)
     }
@@ -29,21 +36,40 @@ class EmployeeFragment : androidx.fragment.app.Fragment() {
         fab.setOnClickListener { view ->
             EmployeeListFragment.showEmployee(view.context, object : EmployeeListFragment.Companion.OnDone {
                 override fun onDone(name: String, salary: String, age: String) {
-                    mEmployee?.let { employeeViewModel.editEmployee(Employee(it.id, name, age.toInt(), salary.toInt())) }
+                    mEmployee?.let { editEmployee(it.id, name, age.toInt(), salary.toInt()) }
                 }
             }, mEmployee)
         }
         deleteItem.visibility = View.GONE
         initObserver()
         extractIdAndUpdateUi()
-
     }
 
     private fun initObserver() {
-        employeeViewModel = activity?.let { ViewModelProviders.of(it).get(EmployeeListViewModel::class.java) }!!
-        employeeViewModel.getEmployeeList().observe(this, Observer {
-            extractIdAndUpdateUi()
-        })
+        lifecycleScope.launchWhenResumed {
+            // repeatOnLifecycle launches the block in a new coroutine every time the
+            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
+            //repeatOnLifecycle(Lifecycle.State.STARTED) {}
+            employeeViewModel.employeeUiState.collect {
+                // New value received
+                when (it) {
+                    is EmployeeListViewModel.LatestEmployeeUiState.Success -> extractIdAndUpdateUi()
+                    is EmployeeListViewModel.LatestEmployeeUiState.Error -> showError(it.exception)
+                }
+            }
+
+
+        }
+    }
+
+    private fun showError(exception: Throwable) {
+
+    }
+
+    fun editEmployee(id: Int, name: String, age: Int, salary: Int) {
+        lifecycleScope.launch {
+            employeeViewModel.editEmployee(Employee(id, name, age, salary))
+        }
     }
 
     private var mEmployee: Employee? = null
@@ -52,11 +78,10 @@ class EmployeeFragment : androidx.fragment.app.Fragment() {
         val bundle = arguments
         if (bundle != null && bundle.containsKey(KEY_EMPLOYEE_ID)) {
             val id = bundle.getInt(KEY_EMPLOYEE_ID)
-            App.getBackgroundHandler().post {
-                mEmployee = App.getEmployeeDao().getEmployee(id)
+            lifecycleScope.launch {
+                mEmployee = employeeDao.getEmployee(id)
                 updateUi()
             }
-
         }
     }
     private fun updateUi() {

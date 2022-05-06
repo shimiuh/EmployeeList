@@ -2,30 +2,26 @@ package app.shimi.com.employeelist.repository
 
 import app.shimi.com.employeelist.model.dataModel.Employee
 import app.shimi.com.employeelist.model.networkModel.EmployeeCall
-import app.shimi.com.employeelist.model.networkModel.EmployeeResult
+import app.shimi.com.employeelist.model.networkModel.EmployeeRestObject
+import app.shimi.com.employeelist.model.networkModel.EmployeesRestObject
 import com.google.gson.JsonObject
-import io.reactivex.Observable
+import kotlinx.coroutines.flow.Flow
 import retrofit2.http.*
 
 interface EmployeeApi {
 
     @GET("employees")
-    fun getEmployees()
-            : Observable<List<Employee>>
+    suspend fun getEmployees(): EmployeesRestObject
 
     @GET("employee/{id}")
-    fun getEmployee(@Path("id") EmployeeId: Int)
-            : Observable<Employee>
+    suspend fun getEmployee(@Path("id") EmployeeId: Int) : Flow<Employee>
 
     @POST("create")
-    fun createEmployee(@Body employee: EmployeeCall)
-            : Observable<EmployeeResult>
+    suspend fun createEmployee(@Body employee: EmployeeCall) : EmployeeRestObject
 
     @PUT("update/{id}")
-    fun updateEmployee(@Path("id") EmployeeId: Int, @Body employee: Employee)
-            : Observable<EmployeeCall>
+    suspend fun updateEmployee(@Path("id") EmployeeId: Int, @Body employee: Employee) : Flow<EmployeeCall>
 
     @DELETE("delete/{id}")
-    fun deleteEmployee(@Path("id") EmployeeId: Int)
-            : Observable<JsonObject>
+    suspend fun deleteEmployee(@Path("id") EmployeeId: Int) : Flow<JsonObject>
 }

@@ -1,9 +1,8 @@
 package app.shimi.com.employeelist.view
 
 import android.content.Context
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
@@ -11,20 +10,26 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import app.shimi.com.employeelist.R
 import app.shimi.com.employeelist.model.dataModel.Employee
 import app.shimi.com.employeelist.viewmodel.EmployeeListViewModel
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.employee_dialog.view.*
 import kotlinx.android.synthetic.main.employee_fragment_list.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
-
+@AndroidEntryPoint
 class EmployeeListFragment : androidx.fragment.app.Fragment() {
 
     private val employeeListAdapter: EmployeeListAdapter by lazy { EmployeeListAdapter() }
-    private lateinit var employeeViewModel: EmployeeListViewModel
+    private val employeeViewModel: EmployeeListViewModel by viewModels()
+
     private lateinit var mItemAnimation: LayoutAnimationController
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.employee_fragment_list, container, false)
@@ -37,36 +42,53 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
             showEmployee(view.context, object: OnDone {
                 override fun onDone(name: String, salary: String, age: String) {
                     swipeRefreshList.isRefreshing = true
-                    employeeViewModel.createEmployee(name,salary,age)
+                    lifecycleScope.launch{
+                        employeeViewModel.createEmployee(name,salary,age)
+                    }
                 }
             }, null)
         }
-        initObserver()
         initRecycler()
+        initDataObserver()
+
     }
 
-    private fun initObserver() {
-        employeeViewModel = activity?.let { ViewModelProviders.of(it).get(EmployeeListViewModel::class.java) }!!
-        employeeViewModel.getEmployeeList().observe(viewLifecycleOwner, Observer {
-            updateData(it)
-        })
+
+    private fun initDataObserver() {
+        lifecycleScope.launchWhenResumed {
+            // repeatOnLifecycle launches the block in a new coroutine every time the
+            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
+            //repeatOnLifecycle(Lifecycle.State.STARTED) {}
+            employeeViewModel.employeeUiState.collect {
+                // New value received
+                when (it) {
+                    is EmployeeListViewModel.LatestEmployeeUiState.Success -> updateData(it.employees)
+                    is EmployeeListViewModel.LatestEmployeeUiState.Error -> showError(it.exception)
+                }
+            }
+        }
+    }
+
+    private fun showError(exception: Throwable) {
+        view?.let { Snackbar.make(it, "Employee list updated", Snackbar.LENGTH_LONG).show() }
     }
 
 
     private fun updateData(list: List<Employee>) {
+        Log.d("TAG","in updateData list = $list")
         mItemAnimation.animation.reset()
-        employee_list.layoutAnimation = mItemAnimation
+        employeeList.layoutAnimation = mItemAnimation
         employeeListAdapter.setEmployeeList(list)
-        employee_list.scheduleLayoutAnimation()
+        employeeList.scheduleLayoutAnimation()
         swipeRefreshList.isRefreshing = false
-        view?.let { it1 -> Snackbar.make(it1, "Employee list updated", Snackbar.LENGTH_LONG).show() }
+        view?.let {Snackbar.make(it, "Employee list updated", Snackbar.LENGTH_LONG).show() }
     }
 
 
     private fun initRecycler() {
         val resId = R.anim.layout_animation_fall_down
         mItemAnimation = AnimationUtils.loadLayoutAnimation(context, resId)
-        employee_list.run {
+        employeeList.run {
             adapter = employeeListAdapter
             employeeListAdapter.setOnItemClickListener(object : EmployeeListAdapter.OnItemClickListener {
                 override fun onClick(view: View, employee: Employee) {
@@ -74,14 +96,26 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
                 }
                 override fun onRemoveItem(employee: Employee) {
                     swipeRefreshList.isRefreshing = true
-                    employeeViewModel.deleteEmployee(employee)
+                    deleteEmployee(employee)
                 }
             })
         }
         swipeRefreshList.run {
-            setOnRefreshListener { employeeViewModel.loadEmployees()}
+            loadEmployees()
         }
 
+    }
+
+    private fun deleteEmployee(employee: Employee) {
+        lifecycleScope.launch {
+            employeeViewModel.deleteEmployee(employee)
+        }
+    }
+
+    private fun loadEmployees() {
+        lifecycleScope.launch {
+            employeeViewModel.loadEmployees()
+        }
     }
 
     companion object {

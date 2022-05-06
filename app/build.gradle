@@ -2,6 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
+
+//
+//plugins {
+//    id 'com.android.application'
+//    id 'kotlin-android'
+//    id 'kotlin-kapt'
+//    id 'kotlin-android-extensions'
+//    id 'dagger.hilt.android.plugin'
+//}
 
 android {
     compileSdkVersion 32
@@ -23,6 +33,10 @@ android {
     dataBinding{
         enabled=true
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
 }
 
 dependencies {
@@ -38,27 +52,46 @@ dependencies {
     implementation "com.google.android.material:material:$android_support_version"
     implementation 'androidx.appcompat:appcompat:1.4.1'
 
-    // LiveData & ViewModel
+    // LiveData & ViewModel & Lifecycle
+    implementation "androidx.activity:activity-ktx:1.4.0"
+    implementation "androidx.fragment:fragment-ktx:1.4.1"
+    implementation "androidx.navigation:navigation-ui-ktx:2.4.2"
+
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 
     //Room
     def room_version = "2.4.2"
     implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.room:room-rxjava2:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
+
     // Retrofit
+    def retrofit_version = '2.9.0'
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
 
-    //Rx
-    implementation "io.reactivex.rxjava2:rxjava:2.2.9"
-    implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
+//    //Rx
+//    implementation "io.reactivex.rxjava2:rxjava:2.2.9"
+//    implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
+
+    //Hilt dependence injection
+    implementation("com.google.dagger:hilt-android:2.38.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.38.1")
 
     //Test
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }
