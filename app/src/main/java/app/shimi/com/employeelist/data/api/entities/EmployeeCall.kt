@@ -1,4 +1,4 @@
-package app.shimi.com.employeelist.model.networkModel
+package app.shimi.com.employeelist.data.api.entities
 
 data class EmployeeCall(
 

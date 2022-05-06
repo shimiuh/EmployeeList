@@ -1,15 +1,7 @@
-package app.shimi.com.employeelist.model.networkModel
+package app.shimi.com.employeelist.data.api.entities
 
-import app.shimi.com.employeelist.model.dataModel.Employee
+import app.shimi.com.employeelist.data.model.Employee
 import com.google.gson.annotations.SerializedName
-//
-//data class EmployeeResult(
-//
-//    val name: String,
-//    val salary: Int,
-//    val age: Int,
-//    val id: Int
-//    )
 
 data class EmployeeRestObject (
     @SerializedName("status"  )

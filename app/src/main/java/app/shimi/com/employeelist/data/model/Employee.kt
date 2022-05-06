@@ -1,4 +1,4 @@
-package app.shimi.com.employeelist.model.dataModel
+package app.shimi.com.employeelist.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -1,9 +1,10 @@
-package app.shimi.com.employeelist.repository
+package app.shimi.com.employeelist.data.repository
 
 import android.util.Log
-import app.shimi.com.employeelist.model.dataModel.Employee
+import app.shimi.com.employeelist.data.api.endpoints.EmployeeApi
 import app.shimi.com.employeelist.data.persistence.db.EmployeeDao
-import app.shimi.com.employeelist.model.networkModel.EmployeeCall
+import app.shimi.com.employeelist.data.api.entities.EmployeeCall
+import app.shimi.com.employeelist.data.model.Employee
 import com.google.gson.JsonObject
 import kotlinx.coroutines.flow.*
 

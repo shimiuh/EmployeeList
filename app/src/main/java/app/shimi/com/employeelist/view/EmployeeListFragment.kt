@@ -13,8 +13,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import app.shimi.com.employeelist.R
-import app.shimi.com.employeelist.model.dataModel.Employee
-import app.shimi.com.employeelist.viewmodel.EmployeeListViewModel
+import app.shimi.com.employeelist.data.model.Employee
+import app.shimi.com.employeelist.view.viewmodel.EmployeeListViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.content_main.*
@@ -48,6 +48,9 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
                 }
             }, null)
         }
+        swipeRefreshList.setOnRefreshListener {
+            loadEmployees()
+        }
         initRecycler()
         initDataObserver()
 
@@ -75,13 +78,13 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
 
 
     private fun updateData(list: List<Employee>) {
-        Log.d("TAG","in updateData list = $list")
+        Log.d("TAG","in updateData list = ${list.size}")
         mItemAnimation.animation.reset()
         employeeList.layoutAnimation = mItemAnimation
         employeeListAdapter.setEmployeeList(list)
         employeeList.scheduleLayoutAnimation()
         swipeRefreshList.isRefreshing = false
-        view?.let {Snackbar.make(it, "Employee list updated", Snackbar.LENGTH_LONG).show() }
+        //view?.let {Snackbar.make(it, "Employee list updated", Snackbar.LENGTH_LONG).show() }
     }
 
 
@@ -100,10 +103,6 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
                 }
             })
         }
-        swipeRefreshList.run {
-            loadEmployees()
-        }
-
     }
 
     private fun deleteEmployee(employee: Employee) {

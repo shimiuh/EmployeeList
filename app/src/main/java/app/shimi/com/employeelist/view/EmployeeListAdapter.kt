@@ -8,10 +8,10 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import app.shimi.com.employeelist.BR
 import app.shimi.com.employeelist.R
-import app.shimi.com.employeelist.model.dataModel.Employee
+import app.shimi.com.employeelist.data.model.Employee
 
 
-class EmployeeListAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<EmployeeHolder>() {
+class EmployeeListAdapter : RecyclerView.Adapter<EmployeeHolder>() {
 
     interface OnItemClickListener {
         fun onClick(view: View, employee: Employee)

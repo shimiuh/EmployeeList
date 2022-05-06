@@ -1,9 +1,9 @@
-package app.shimi.com.employeelist.repository
+package app.shimi.com.employeelist.data.api.endpoints
 
-import app.shimi.com.employeelist.model.dataModel.Employee
-import app.shimi.com.employeelist.model.networkModel.EmployeeCall
-import app.shimi.com.employeelist.model.networkModel.EmployeeRestObject
-import app.shimi.com.employeelist.model.networkModel.EmployeesRestObject
+import app.shimi.com.employeelist.data.api.entities.EmployeeCall
+import app.shimi.com.employeelist.data.api.entities.EmployeeRestObject
+import app.shimi.com.employeelist.data.api.entities.EmployeesRestObject
+import app.shimi.com.employeelist.data.model.Employee
 import com.google.gson.JsonObject
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.*

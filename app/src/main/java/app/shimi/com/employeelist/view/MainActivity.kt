@@ -3,7 +3,7 @@ package app.shimi.com.employeelist.view
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity;
 import app.shimi.com.employeelist.R
-import app.shimi.com.employeelist.model.dataModel.Employee
+import app.shimi.com.employeelist.data.model.Employee
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

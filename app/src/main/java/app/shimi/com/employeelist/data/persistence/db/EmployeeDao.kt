@@ -2,7 +2,7 @@ package app.shimi.com.employeelist.data.persistence.db
 
 
 import androidx.room.*
-import app.shimi.com.employeelist.model.dataModel.Employee
+import app.shimi.com.employeelist.data.model.Employee
 import kotlinx.coroutines.flow.Flow
 
 @Dao

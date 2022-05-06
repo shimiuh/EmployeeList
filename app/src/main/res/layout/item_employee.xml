@@ -5,7 +5,7 @@
 
         <variable
                 name="employee"
-                type="app.shimi.com.employeelist.model.dataModel.Employee" />
+                type="app.shimi.com.employeelist.data.model.Employee" />
     </data>
 
     <androidx.cardview.widget.CardView

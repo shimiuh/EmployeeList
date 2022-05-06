@@ -1,9 +1,9 @@
-package app.shimi.com.employeelist.viewmodel
+package app.shimi.com.employeelist.view.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.shimi.com.employeelist.model.dataModel.Employee
-import app.shimi.com.employeelist.repository.EmployeeRepository
+import app.shimi.com.employeelist.data.model.Employee
+import app.shimi.com.employeelist.data.repository.EmployeeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +38,8 @@ class EmployeeListViewModel @Inject constructor(
         // Do an asynchronous operation to fetch Employees and post value.
             employeeRepo.getEmployees()
                 .catch { postNewState(LatestEmployeeUiState.Error(it)) }
-                .collect { postNewState(LatestEmployeeUiState.Success(it)) }
+                .collect {
+                    postNewState(LatestEmployeeUiState.Success(it)) }
     }
 
     suspend fun createEmployee(name: String, salary: String, age: String) {

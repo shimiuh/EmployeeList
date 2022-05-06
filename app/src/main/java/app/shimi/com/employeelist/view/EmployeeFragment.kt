@@ -7,13 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import app.shimi.com.employeelist.App
 import app.shimi.com.employeelist.R
+import app.shimi.com.employeelist.data.model.Employee
 import app.shimi.com.employeelist.data.persistence.db.EmployeeDao
-import app.shimi.com.employeelist.model.dataModel.Employee
-import app.shimi.com.employeelist.viewmodel.EmployeeListViewModel
+import app.shimi.com.employeelist.view.viewmodel.EmployeeListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.employee_fragment.*
 import kotlinx.android.synthetic.main.item_employee.*
@@ -85,11 +83,12 @@ class EmployeeFragment : Fragment() {
         }
     }
     private fun updateUi() {
-        activity?.runOnUiThread({
-            employee_name.text   = mEmployee?.employee_name
-            employee_salary.text = mEmployee?.employee_salary.toString()
-            employee_age.text    = mEmployee?.employee_age.toString()
-        })
+        employee_name.text = mEmployee?.employee_name
+        employee_salary.text = mEmployee?.employee_salary.toString()
+        employee_age.text = mEmployee?.employee_age.toString()
+        activity?.runOnUiThread {
+
+        }
     }
 
 

@@ -1,11 +1,11 @@
-package app.shimi.com.employeelist.data.api.module
+package app.shimi.com.employeelist.module
 
 import android.content.Context
 import androidx.room.Room
 import app.shimi.com.employeelist.data.persistence.db.AppDatabase
 import app.shimi.com.employeelist.data.persistence.db.EmployeeDao
-import app.shimi.com.employeelist.repository.EmployeeApi
-import app.shimi.com.employeelist.repository.EmployeeRepository
+import app.shimi.com.employeelist.data.api.endpoints.EmployeeApi
+import app.shimi.com.employeelist.data.repository.EmployeeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
