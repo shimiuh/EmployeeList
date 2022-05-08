@@ -10,11 +10,7 @@ data class EmployeeRestObject (
     var data : Data? = Data(),
     @SerializedName("message" )
     var message : String? = ""
-) {
-    fun isSuccess(): Boolean {
-        return  this.status == "success"
-    }
-}
+) { fun isSuccess() = message.isSuccess() }
 
 data class EmployeesRestObject (
     @SerializedName("status"  )
@@ -23,10 +19,18 @@ data class EmployeesRestObject (
     var data : ArrayList<Data> = arrayListOf(),
     @SerializedName("message" )
     var message : String? = ""
-){
-    fun isSuccess(): Boolean {
-        return  this.status == "success"
-    }
+) { fun isSuccess() = status.isSuccess()
+    fun toEmployeeList() = data.map{it.toEmployee()} }
+
+data class RestObject (
+    @SerializedName("status"  )
+    var status  : String? = "",
+    @SerializedName("message" )
+    var message : String? = ""
+) { fun isSuccess() = status.isSuccess() }
+
+private fun String?.isSuccess():Boolean {
+    return this == "success"
 }
 
 data class Data (
@@ -51,3 +55,47 @@ data class Data (
         )
     }
 }
+
+
+
+
+
+//data class EmployeeRestObject (
+//    @SerializedName("status"  )
+//    override var status  : String? = "",
+//    @SerializedName("data"    )
+//    var data : Data? = Data(),
+//    @SerializedName("message" )
+//    override var message : String? = ""
+//): RestObject()
+//{
+//    fun isSuccess(): Boolean {
+//        return  this.status == "success"
+//    }
+//}
+
+//data class EmployeesRestObject(
+//    @SerializedName("status"  )
+//    override var status  : String? = "",
+//    @SerializedName("data"    )
+//    var data : ArrayList<Data> = arrayListOf(),
+//    @SerializedName("message" )
+//    override var message : String? = ""
+//): RestObject()
+////{
+////    fun isSuccess(): Boolean {
+////        return  this.status == "success"
+////    }
+////}
+//
+//abstract class RestObject (
+//    @SerializedName("status"  )
+//    open var status  : String? = "",
+//    @SerializedName("message" )
+//    open var message : String? = ""
+//) {
+//    fun isSuccess(): Boolean {
+//        return  this.status == "success"
+//    }
+//}
+

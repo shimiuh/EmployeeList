@@ -13,10 +13,9 @@ class ApiInterceptor: Interceptor {
         val url: HttpUrl = httpUrl.newBuilder().build()
         val request: Request = original.newBuilder().url(url).build()
         //return chain.proceed(request)
-            val response = chain.proceed(request)
-            //val url = newRequest.url.toString().removeRange(0, BaseApplication.get().getBaseUrl().length)
-            val  body = response.peekBody(Long.MAX_VALUE).charStream().readText()
-            Log.d("TAG"," in onRequestIntercept end req = $url body = $body")
-            return response
+        val response = chain.proceed(request)
+        val  body = response.peekBody(Long.MAX_VALUE).charStream().readText()
+        Log.d("TAG"," in onRequestIntercept end req = $url body = $body")
+        return response
     }
 }

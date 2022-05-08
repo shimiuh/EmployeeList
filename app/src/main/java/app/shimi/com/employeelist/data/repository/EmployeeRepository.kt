@@ -4,57 +4,74 @@ import android.util.Log
 import app.shimi.com.employeelist.data.api.endpoints.EmployeeApi
 import app.shimi.com.employeelist.data.persistence.db.EmployeeDao
 import app.shimi.com.employeelist.data.api.entities.EmployeeCall
+import app.shimi.com.employeelist.data.api.entities.EmployeeRestObject
+import app.shimi.com.employeelist.data.api.entities.EmployeesRestObject
+import app.shimi.com.employeelist.data.api.entities.RestObject
 import app.shimi.com.employeelist.data.model.Employee
-import com.google.gson.JsonObject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import java.lang.Exception
 
 
 class EmployeeRepository(private val employeeApi: EmployeeApi, val employeeDao: EmployeeDao) {
 
     suspend fun getEmployees(): Flow<List<Employee>> {
-        return merge(getEmployeesFromDb(), getEmployeesFromApi())
+        Log.d("TAG","in getEmployees")
+        return getEmployeesFromDb()
     }
 
-    suspend fun createEmployee(name: String, salary: String, age: String){
-        return createEmployeeOnRemoteApi(name, salary, age)
+    suspend fun editEmployee(employee: Employee): Flow<RestObject> {
+        return flow{
+            val res = employeeApi.updateEmployee(employee.id)
+            Log.d("TAG","in editEmployee res =  ${res.isSuccess()}")
+            if(res.isSuccess()){
+                employeeDao.update(employee)
+            }
+            emit(res)
+        }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun editEmployee(employee: Employee): Flow<EmployeeCall> {
-        return employeeApi.updateEmployee(employee.id, employee)
+    suspend fun createEmployee(name: String, salary: String, age: String) : Flow<EmployeeRestObject> {
+        Log.d("TAG","in createEmployee")
+        return flow{
+            val res = employeeApi.createEmployee(EmployeeCall(name, salary, age))
+            Log.d("TAG","in createEmployee res =  ${res.isSuccess()}")
+            if(res.isSuccess()){
+                employeeDao.insert(res.data!!.toEmployee())
+            }
+            emit(res)
+        }.flowOn(Dispatchers.IO)
     }
 
-    suspend fun deleteEmployee(employee: Employee): Flow<JsonObject> {
-        return employeeApi.deleteEmployee(employee.id)
+    suspend fun deleteEmployee(employee: Employee): Flow<RestObject> {
+        return flow {
+            val res = employeeApi.deleteEmployee(employee.id)
+            Log.d("TAG","in deleteEmployee res =  ${res.isSuccess()} $employee")
+            if(res.isSuccess()){
+                employeeDao.delete(employee)
+            }
+            emit(res)
+        }.flowOn(Dispatchers.IO)
     }
 
-    private suspend fun getEmployeesFromDb(): Flow<List<Employee>> {
+    private fun getEmployeesFromDb(): Flow<List<Employee>> {
         return employeeDao.getEmployees()
     }
 
-    private suspend fun createEmployeeOnRemoteApi(name: String, salary: String, age: String) {
-        employeeApi.createEmployee(EmployeeCall(name, salary, age)).let {
-            if(it.isSuccess()){
-                Log.d("TAG","in createEmployeeOnRemoteApi ${it.data} ${it.data!!.toEmployee()}")
-                employeeDao.insert(it.data!!.toEmployee())
-            }
-        }
-    }
-
-    private suspend fun getEmployeesFromApi(): Flow<List<Employee>> {
+    suspend fun getEmployeesFromApi():  Flow<List<Employee>> {
         return flow {
-            employeeApi.getEmployees().let {
-                var res = listOf<Employee>()
-                if(it.isSuccess()){
-                    res = it.data.map {employee -> employee.toEmployee()}
-                    storeEmployeesInDb(it.data.map {employee -> employee.toEmployee()})
-                }
-                emit(res)
+            val res = employeeApi.getEmployees()
+            Log.d("TAG","in getEmployeesFromApi res =  ${res.isSuccess()}")
+            if(res.isSuccess()){
+                storeEmployeesInDb(res.toEmployeeList())
             }
-        }
-
+            emit(res.toEmployeeList())
+        }.flowOn(Dispatchers.IO)
     }
 
     private suspend fun storeEmployeesInDb(employees: List<Employee>) {
+        Log.d("TAG","in storeEmployeesInDb $employees")
         employeeDao.insertAll(employees)
     }
 

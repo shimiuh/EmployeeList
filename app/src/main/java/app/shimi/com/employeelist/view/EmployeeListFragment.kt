@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import app.shimi.com.employeelist.R
@@ -28,7 +29,7 @@ import kotlinx.coroutines.launch
 class EmployeeListFragment : androidx.fragment.app.Fragment() {
 
     private val employeeListAdapter: EmployeeListAdapter by lazy { EmployeeListAdapter() }
-    private val employeeViewModel: EmployeeListViewModel by viewModels()
+    private val employeeViewModel: EmployeeListViewModel by activityViewModels()
 
     private lateinit var mItemAnimation: LayoutAnimationController
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -67,13 +68,17 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
                 when (it) {
                     is EmployeeListViewModel.LatestEmployeeUiState.Success -> updateData(it.employees)
                     is EmployeeListViewModel.LatestEmployeeUiState.Error -> showError(it.exception)
+                    is EmployeeListViewModel.LatestEmployeeUiState.ActionSuccess -> {}
                 }
             }
         }
     }
 
     private fun showError(exception: Throwable) {
-        view?.let { Snackbar.make(it, "Employee list updated", Snackbar.LENGTH_LONG).show() }
+        Log.d("TAG","in On Error ${exception.message}")
+
+        swipeRefreshList.isRefreshing = false
+        view?.let { Snackbar.make(it, "On Error ${exception.message}", Snackbar.LENGTH_LONG).show() }
     }
 
 

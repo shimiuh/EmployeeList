@@ -8,8 +8,7 @@ import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.BindingAdapter
 
 
-
-@Entity(tableName = "employees")
+@Entity(tableName = "Employees")
 data class Employee(
     @PrimaryKey
     @ColumnInfo(name = "id")

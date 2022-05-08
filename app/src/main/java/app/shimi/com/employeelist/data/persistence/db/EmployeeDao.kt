@@ -12,7 +12,7 @@ interface EmployeeDao {
     fun getEmployees(): Flow<List<Employee>>
 
     @Query("SELECT * FROM employees WHERE id = :id")
-    suspend fun getEmployee(id: Int): Employee
+    suspend fun getEmployee(id: Int):Employee
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(employee: Employee)

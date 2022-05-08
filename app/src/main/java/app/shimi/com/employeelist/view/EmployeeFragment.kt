@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import app.shimi.com.employeelist.R
@@ -23,7 +24,7 @@ import javax.inject.Inject
 class EmployeeFragment : Fragment() {
 
     @Inject lateinit var employeeDao: EmployeeDao
-    private val employeeViewModel: EmployeeListViewModel by viewModels()
+    private val employeeViewModel: EmployeeListViewModel by activityViewModels()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.employee_fragment, container, false)
     }
