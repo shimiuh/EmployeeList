@@ -28,8 +28,9 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class EmployeeListFragment : androidx.fragment.app.Fragment() {
 
-    private val employeeListAdapter: EmployeeListAdapter by lazy { EmployeeListAdapter() }
+
     private val employeeViewModel: EmployeeListViewModel by activityViewModels()
+    private val employeeListAdapter: EmployeeListAdapter by lazy { EmployeeListAdapter(listOf(),employeeViewModel) }
 
     private lateinit var mItemAnimation: LayoutAnimationController
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -96,18 +97,7 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
     private fun initRecycler() {
         val resId = R.anim.layout_animation_fall_down
         mItemAnimation = AnimationUtils.loadLayoutAnimation(context, resId)
-        employeeList.run {
-            adapter = employeeListAdapter
-            employeeListAdapter.setOnItemClickListener(object : EmployeeListAdapter.OnItemClickListener {
-                override fun onClick(view: View, employee: Employee) {
-                    (activity as MainActivity).showEmployee(employee)
-                }
-                override fun onRemoveItem(employee: Employee) {
-                    swipeRefreshList.isRefreshing = true
-                    deleteEmployee(employee)
-                }
-            })
-        }
+        employeeList.adapter = employeeListAdapter
     }
 
     private fun deleteEmployee(employee: Employee) {

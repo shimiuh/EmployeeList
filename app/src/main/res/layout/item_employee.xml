@@ -6,14 +6,30 @@
         <variable
                 name="employee"
                 type="app.shimi.com.employeelist.data.model.Employee" />
+
+        <variable
+                name="listener"
+                type="app.shimi.com.employeelist.view.EmployeeListAdapter.OnItemClickListener"
+                />
     </data>
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_margin="10dp">
+            android:layout_width="match_parent"
+            android:layout_height="112dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_margin="10dp"
+            android:onClick="@{() -> listener.onClick(employee)}">
+
+        <TextView
+                android:id="@+id/employee_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_marginTop="75dp"
+                android:text="@{employee.id}"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp" />
 
         <TextView
                 android:layout_width="wrap_content"
@@ -80,7 +96,8 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="5dp"
                 android:padding="10dp"
-                android:src="@android:drawable/ic_menu_delete" />
+                android:src="@android:drawable/ic_menu_delete"
+                android:onClick="@{() -> listener.onRemoveItem(employee)}"/>
 
     </androidx.cardview.widget.CardView>
 

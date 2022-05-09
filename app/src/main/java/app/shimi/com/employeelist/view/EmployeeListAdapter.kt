@@ -1,64 +1,126 @@
 package app.shimi.com.employeelist.view
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import app.shimi.com.employeelist.BR
 import app.shimi.com.employeelist.R
 import app.shimi.com.employeelist.data.model.Employee
+import app.shimi.com.employeelist.databinding.ItemEmployeeBinding
+import app.shimi.com.employeelist.view.viewmodel.EmployeeListViewModel
+import kotlinx.coroutines.launch
 
+class EmployeeListAdapter(
+    private var employeeList: List<Employee>,
+    private val employeeViewModel: EmployeeListViewModel?
+) : RecyclerView.Adapter<EmployeeListAdapter.EmployeeHolder>() {
 
-class EmployeeListAdapter : RecyclerView.Adapter<EmployeeHolder>() {
+//    lateinit var listener: OnItemClickListener
+//    private var employeeList: List<Employee> = emptyList()
 
-    interface OnItemClickListener {
-        fun onClick(view: View, employee: Employee)
-        fun onRemoveItem(employee: Employee)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmployeeHolder {
+        return EmployeeHolder(DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            R.layout.item_employee, parent, false
+        ) )
     }
-    lateinit var listener: OnItemClickListener
-    private var employeeList: List<Employee> = emptyList()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmployeeHolder =
-        EmployeeHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context),R.layout.item_employee, parent, false),listener,employeeList)
+//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EmployeeHolder =
+//        EmployeeHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.context),R.layout.item_employee, parent, false),listener,employeeList)
 
-    override fun onBindViewHolder(holder: EmployeeHolder, position: Int) {
-        val employee = employeeList[position]
-        holder.bind(employee)
+
+
+
+
+    override fun getItemCount() = employeeList.size
+
+    //override fun onBindViewHolder(holder: EmployeeHolder, position: Int) = holder.bind(employeeList[position])
+
+
+    override fun onBindViewHolder(holder: EmployeeHolder, position: Int) =
+        holder.bind(employeeList[position], object : OnItemClickListener {
+            override fun onClick(employee: Employee) {
+               Log.d("TAG","in EmployeeHolder OnClickListener size = ${employeeList.size} employee = $employee")
+                employeeViewModel?.openEmployeeDetails(employee)
+
+            }
+            override fun onRemoveItem(employee: Employee) {
+                employeeViewModel?.deleteEmployee(employee)
+            }
+        })
+
+    class EmployeeHolder(private val binding: ItemEmployeeBinding) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(employeeEntity: Employee, employeeListener: OnItemClickListener) {
+            with(binding)
+            {
+                employee  = employeeEntity
+                listener = employeeListener
+                executePendingBindings()
+            }
+        }
     }
 
-    override fun getItemCount() = employeeList.size -1
+
+
+
+
+
+
+
+//    override fun onBindViewHolder(holder: EmployeeHolder, position: Int) {
+//        val employee = comments[position]
+//        holder.bind(employee)
+//    }
+
+
+
+
+
+//    fun setOnItemClickListener(listener: OnItemClickListener) {
+//        this.listener = listener
+//    }
+
+//    class EmployeeHolder (
+//        private val viewDataBinding: ViewDataBinding, listener: EmployeeListAdapter.OnItemClickListener, employeeList: List<Employee>)
+//        : RecyclerView.ViewHolder(viewDataBinding.root) {
+//
+//        init {
+//            viewDataBinding.root.setOnClickListener {
+//                listener.onClick(it, employeeList[bindingAdapterPosition])
+//                Log.d("TAG","in EmployeeHolder OnClickListener size = ${employeeList.size} bindingAdapterPosition = $bindingAdapterPosition")
+//            }
+//            this.viewDataBinding.root.findViewById<View>(R.id.deleteItem).setOnClickListener {
+//                listener.onRemoveItem( employeeList[bindingAdapterPosition] )
+//            }
+//        }
+//
+//        fun bind(employee: Employee) {
+//            viewDataBinding.setVariable(BR.employee, employee)
+//            viewDataBinding.executePendingBindings()
+//        }
+//
+//    }
 
     fun setEmployeeList(employeeList: List<Employee>?) {
         if(employeeList != null) {
             this.employeeList = employeeList
             notifyDataSetChanged()
         }
+        Log.d("TAG","in setEmployeeList ${itemCount}")
     }
 
-    fun setOnItemClickListener(listener: OnItemClickListener) {
-        this.listener = listener
+    interface OnItemClickListener {
+        fun onClick(employee: Employee)
+        fun onRemoveItem(employee: Employee)
     }
 
 }
 
 
-class EmployeeHolder (
-    private val viewDataBinding: ViewDataBinding, listener: EmployeeListAdapter.OnItemClickListener, employeeList: List<Employee>)
-    : RecyclerView.ViewHolder(viewDataBinding.root) {
 
-    init {
-        viewDataBinding.root.setOnClickListener(View.OnClickListener {
-            listener.onClick(it, employeeList[bindingAdapterPosition] )
-        })
-        this.viewDataBinding.root.findViewById<View>(R.id.deleteItem).setOnClickListener {
-            listener.onRemoveItem( employeeList[bindingAdapterPosition] )
-        }
-    }
-
-    fun bind(employee: Employee) {
-        viewDataBinding.setVariable(BR.employee, employee)
-        viewDataBinding.executePendingBindings()
-    }
-}

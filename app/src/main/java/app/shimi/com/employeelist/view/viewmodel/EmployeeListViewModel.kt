@@ -79,22 +79,30 @@ class EmployeeListViewModel @Inject constructor(
         }
     }
 
-    suspend fun deleteEmployee(employee: Employee) {
+    fun deleteEmployee(employee: Employee) {
         Log.d("TAG","in deleteEmployee VM $employee")
         // Do an suspend operation to remove Employee and post value.
-        employeeRepo.deleteEmployee(employee).catch {
-            Log.d("TAG","in deleteEmployee VM catch $it")
-            postNewState(LatestEmployeeUiState.Error(it))
-        }.collect{
-            postNewState(LatestEmployeeUiState.ActionSuccess())
-            postNewState(LatestEmployeeUiState.Success(mCacheList))
-            Log.d("TAG","in deleteEmployee VM collect $it.")
+        viewModelScope.launch {
+            employeeRepo.deleteEmployee(employee).catch {
+                Log.d("TAG","in deleteEmployee VM catch $it")
+                postNewState(LatestEmployeeUiState.Error(it))
+            }.collect{
+                postNewState(LatestEmployeeUiState.ActionSuccess())
+                postNewState(LatestEmployeeUiState.Success(mCacheList))
+                Log.d("TAG","in deleteEmployee VM collect $it.")
+            }
         }
+    }
+
+    fun openEmployeeDetails(employee: Employee) {
+        postNewState(LatestEmployeeUiState.OpenEmployeeDetails(employee))
+        postNewState(LatestEmployeeUiState.Success(mCacheList))
     }
 
     // Represents different states for the LatestEmployees screen
     sealed class LatestEmployeeUiState {
         class ActionSuccess : LatestEmployeeUiState()
+        data class OpenEmployeeDetails(val employee: Employee): LatestEmployeeUiState()
         data class Success(val employees: List<Employee>): LatestEmployeeUiState()
         data class Error(val exception: Throwable): LatestEmployeeUiState()
     }
