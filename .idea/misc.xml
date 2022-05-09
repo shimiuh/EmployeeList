@@ -9,6 +9,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/layout/content_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/employee_fragment_list.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_employee.xml" value="0.1" />
       </map>
     </option>

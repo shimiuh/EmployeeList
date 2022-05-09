@@ -1,19 +1,14 @@
-package app.shimi.com.employeelist.view
+package app.shimi.com.employeelist.ui.view
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import androidx.databinding.DataBindingUtil
 import android.view.ViewGroup
-import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import app.shimi.com.employeelist.BR
 import app.shimi.com.employeelist.R
 import app.shimi.com.employeelist.data.model.Employee
 import app.shimi.com.employeelist.databinding.ItemEmployeeBinding
-import app.shimi.com.employeelist.view.viewmodel.EmployeeListViewModel
-import kotlinx.coroutines.launch
+import app.shimi.com.employeelist.ui.viewmodel.EmployeeListViewModel
 
 class EmployeeListAdapter(
     private var employeeList: List<Employee>,

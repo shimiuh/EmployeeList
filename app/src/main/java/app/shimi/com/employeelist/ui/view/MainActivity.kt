@@ -1,4 +1,4 @@
-package app.shimi.com.employeelist.view
+package app.shimi.com.employeelist.ui.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity;

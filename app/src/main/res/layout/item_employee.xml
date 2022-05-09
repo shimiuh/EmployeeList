@@ -9,7 +9,7 @@
 
         <variable
                 name="listener"
-                type="app.shimi.com.employeelist.view.EmployeeListAdapter.OnItemClickListener"
+                type="app.shimi.com.employeelist.ui.view.EmployeeListAdapter.OnItemClickListener"
                 />
     </data>
 

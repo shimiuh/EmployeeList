@@ -1,4 +1,4 @@
-package app.shimi.com.employeelist.view
+package app.shimi.com.employeelist.ui.view
 
 import android.content.Context
 import android.os.Bundle
@@ -11,14 +11,13 @@ import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import app.shimi.com.employeelist.R
 import app.shimi.com.employeelist.data.model.Employee
-import app.shimi.com.employeelist.view.viewmodel.EmployeeListViewModel
+import app.shimi.com.employeelist.databinding.EmployeeFragmentListBinding
+import app.shimi.com.employeelist.ui.viewmodel.EmployeeListViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.employee_dialog.view.*
 import kotlinx.android.synthetic.main.employee_fragment_list.*
 import kotlinx.coroutines.flow.collect
@@ -33,26 +32,18 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
     private val employeeListAdapter: EmployeeListAdapter by lazy { EmployeeListAdapter(listOf(),employeeViewModel) }
 
     private lateinit var mItemAnimation: LayoutAnimationController
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.employee_fragment_list, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val dataBinding = EmployeeFragmentListBinding.inflate(inflater, container, false).apply {
+            this.viewModel = employeeViewModel
+            this.adapter = employeeListAdapter
+        }
+        return dataBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        fab.setOnClickListener { view ->
-            showEmployee(view.context, object: OnDone {
-                override fun onDone(name: String, salary: String, age: String) {
-                    swipeRefreshList.isRefreshing = true
-                    lifecycleScope.launch{
-                        employeeViewModel.createEmployee(name,salary,age)
-                    }
-                }
-            }, null)
-        }
-        swipeRefreshList.setOnRefreshListener {
-            loadEmployees()
-        }
         initRecycler()
         initDataObserver()
 
@@ -67,9 +58,8 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
             employeeViewModel.employeeUiState.collect {
                 // New value received
                 when (it) {
-                    is EmployeeListViewModel.LatestEmployeeUiState.Success -> updateData(it.employees)
-                    is EmployeeListViewModel.LatestEmployeeUiState.Error -> showError(it.exception)
-                    is EmployeeListViewModel.LatestEmployeeUiState.ActionSuccess -> {}
+                    is EmployeeListViewModel.EmployeeUiState.Success -> updateData(it.employees)
+                    is EmployeeListViewModel.EmployeeUiState.Error -> showError(it.exception)
                 }
             }
         }
@@ -77,8 +67,6 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
 
     private fun showError(exception: Throwable) {
         Log.d("TAG","in On Error ${exception.message}")
-
-        swipeRefreshList.isRefreshing = false
         view?.let { Snackbar.make(it, "On Error ${exception.message}", Snackbar.LENGTH_LONG).show() }
     }
 
@@ -89,15 +77,12 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
         employeeList.layoutAnimation = mItemAnimation
         employeeListAdapter.setEmployeeList(list)
         employeeList.scheduleLayoutAnimation()
-        swipeRefreshList.isRefreshing = false
-        //view?.let {Snackbar.make(it, "Employee list updated", Snackbar.LENGTH_LONG).show() }
     }
 
 
     private fun initRecycler() {
         val resId = R.anim.layout_animation_fall_down
         mItemAnimation = AnimationUtils.loadLayoutAnimation(context, resId)
-        employeeList.adapter = employeeListAdapter
     }
 
     private fun deleteEmployee(employee: Employee) {
@@ -113,35 +98,6 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
     }
 
     companion object {
-        const val TAG: String = "EmployeeListFragment"
-
-        interface OnDone {
-            fun onDone(name: String, salary: String,age: String)
-        }
-        fun showEmployee(context: Context, onDone: OnDone, employee: Employee?){
-
-            val mDialogView = LayoutInflater.from(context).inflate(R.layout.employee_dialog, null)
-            //AlertDialogBuilder
-            val title = if (employee != null) "Edit Employee" else "Create Employee"
-            val buttonTextId = if (employee != null) R.string.update else R.string.create
-            if(employee != null){
-                mDialogView.dialogName.setText(employee.employee_name.toString())
-                mDialogView.dialogSalary.setText(employee.employee_salary.toString())
-                mDialogView.dialogAge.setText(employee.employee_age.toString())
-            }
-            AlertDialog.Builder(context)
-                .setView(mDialogView)
-                .setTitle(title)
-                .setPositiveButton(buttonTextId) { dialog, which ->
-                    dialog.dismiss()
-                    val name = mDialogView.dialogName.text.toString()
-                    val salary = mDialogView.dialogSalary.text.toString()
-                    val age = mDialogView.dialogAge.text.toString()
-                    onDone.onDone(name, salary, age)
-                }
-                .setNegativeButton(android.R.string.cancel,null).show()
-        }
-
+        val TAG = "EmployeeListFragment"
     }
-
 }

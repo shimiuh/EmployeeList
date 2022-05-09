@@ -1,4 +1,4 @@
-package app.shimi.com.employeelist.view
+package app.shimi.com.employeelist.ui.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -7,12 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import app.shimi.com.employeelist.R
 import app.shimi.com.employeelist.data.model.Employee
 import app.shimi.com.employeelist.data.persistence.db.EmployeeDao
-import app.shimi.com.employeelist.view.viewmodel.EmployeeListViewModel
+import app.shimi.com.employeelist.ui.viewmodel.EmployeeListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.employee_fragment.*
 import kotlinx.android.synthetic.main.item_employee.*
@@ -32,13 +31,13 @@ class EmployeeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        fab.setOnClickListener { view ->
-            EmployeeListFragment.showEmployee(view.context, object : EmployeeListFragment.Companion.OnDone {
-                override fun onDone(name: String, salary: String, age: String) {
-                    mEmployee?.let { editEmployee(it.id, name, age.toInt(), salary.toInt()) }
-                }
-            }, mEmployee)
-        }
+//        fab.setOnClickListener { view ->
+//            EmployeeListFragment.showEmployee(view.context, object : EmployeeListFragment.Companion.OnDone {
+//                override fun onDone(name: String, salary: String, age: String) {
+//                    mEmployee?.let { editEmployee(it.id, name, age.toInt(), salary.toInt()) }
+//                }
+//            }, mEmployee)
+//        }
         deleteItem.visibility = View.GONE
         initObserver()
         extractIdAndUpdateUi()
@@ -52,8 +51,8 @@ class EmployeeFragment : Fragment() {
             employeeViewModel.employeeUiState.collect {
                 // New value received
                 when (it) {
-                    is EmployeeListViewModel.LatestEmployeeUiState.Success -> extractIdAndUpdateUi()
-                    is EmployeeListViewModel.LatestEmployeeUiState.Error -> showError(it.exception)
+                    is EmployeeListViewModel.EmployeeUiState.Success -> extractIdAndUpdateUi()
+                    is EmployeeListViewModel.EmployeeUiState.Error -> showError(it.exception)
                 }
             }
 

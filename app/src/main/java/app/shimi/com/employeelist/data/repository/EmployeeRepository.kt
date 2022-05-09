@@ -36,7 +36,7 @@ class EmployeeRepository(private val employeeApi: EmployeeApi, val employeeDao: 
         Log.d("TAG","in createEmployee")
         return flow{
             val res = employeeApi.createEmployee(EmployeeCall(name, salary, age))
-            Log.d("TAG","in createEmployee res =  ${res.isSuccess()}")
+            Log.d("TAG","in createEmployee isSuccess =  ${res.isSuccess()} res = $res")
             if(res.isSuccess()){
                 employeeDao.insert(res.data!!.toEmployee())
             }
