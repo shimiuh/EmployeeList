@@ -47,11 +47,8 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
         initRecycler()
         initDataObserver()
-
     }
 
 
@@ -83,7 +80,6 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
         view?.let { Snackbar.make(it, "On Error ${exception.message}", Snackbar.LENGTH_LONG).show() }
     }
 
-
     private fun updateData(list: List<Employee>) {
         Log.d("TAG","in updateData list = ${list.size}")
         mItemAnimation.animation.reset()
@@ -92,22 +88,8 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
         employeeList.scheduleLayoutAnimation()
     }
 
-
     private fun initRecycler() {
-        val resId = R.anim.layout_animation_fall_down
-        mItemAnimation = AnimationUtils.loadLayoutAnimation(context, resId)
-    }
-
-    private fun deleteEmployee(employee: Employee) {
-        lifecycleScope.launch {
-            employeeViewModel.deleteEmployee(employee)
-        }
-    }
-
-    private fun loadEmployees() {
-        lifecycleScope.launch {
-            employeeViewModel.loadEmployees()
-        }
+        mItemAnimation = AnimationUtils.loadLayoutAnimation(context, R.anim.layout_animation_fall_down)
     }
 
     companion object {
