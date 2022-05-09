@@ -10,7 +10,7 @@ data class EmployeeRestObject (
     var data : Data? = Data(),
     @SerializedName("message" )
     var message : String? = ""
-) { fun isSuccess() = message.isSuccess() }
+) { fun isSuccess() = status.isSuccess() }
 
 data class EmployeesRestObject (
     @SerializedName("status"  )
