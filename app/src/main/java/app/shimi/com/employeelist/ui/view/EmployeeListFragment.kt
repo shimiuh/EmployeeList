@@ -84,7 +84,7 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
         Log.d("TAG","in updateData list = ${list.size}")
         mItemAnimation.animation.reset()
         employeeList.layoutAnimation = mItemAnimation
-        employeeListAdapter.setEmployeeList(list)
+        employeeListAdapter.setEmployeeList(list.reversed())
         employeeList.scheduleLayoutAnimation()
     }
 
