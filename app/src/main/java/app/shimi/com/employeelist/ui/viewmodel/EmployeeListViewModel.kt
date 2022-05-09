@@ -19,7 +19,7 @@ import javax.inject.Inject
 class EmployeeListViewModel @Inject constructor(
     private val employeeRepo: EmployeeRepository) : ViewModel() {
 
-    private val openEmployeeDetailsEvent = SingleLiveEvent<Employee>()
+    val openEmployeeDetailsEvent = SingleLiveEvent<Employee>()
     val isRefreshing = ObservableBoolean(false)
 
     // Backing property to avoid state updates from other classes

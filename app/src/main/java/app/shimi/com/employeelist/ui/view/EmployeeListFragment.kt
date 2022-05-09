@@ -11,12 +11,17 @@ import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import app.shimi.com.employeelist.R
 import app.shimi.com.employeelist.data.model.Employee
 import app.shimi.com.employeelist.databinding.EmployeeFragmentListBinding
 import app.shimi.com.employeelist.ui.viewmodel.EmployeeListViewModel
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.employee_dialog.view.*
 import kotlinx.android.synthetic.main.employee_fragment_list.*
@@ -51,16 +56,24 @@ class EmployeeListFragment : androidx.fragment.app.Fragment() {
 
 
     private fun initDataObserver() {
-        lifecycleScope.launchWhenResumed {
-            // repeatOnLifecycle launches the block in a new coroutine every time the
+
+        lifecycleScope.launch {
             // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
-            //repeatOnLifecycle(Lifecycle.State.STARTED) {}
-            employeeViewModel.employeeUiState.collect {
-                // New value received
-                when (it) {
-                    is EmployeeListViewModel.EmployeeUiState.Success -> updateData(it.employees)
-                    is EmployeeListViewModel.EmployeeUiState.Error -> showError(it.exception)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                employeeViewModel.employeeUiState.collect {
+                    when (it) {
+                        is EmployeeListViewModel.EmployeeUiState.Success -> updateData(it.employees)
+                        is EmployeeListViewModel.EmployeeUiState.Error -> showError(it.exception)
+                    }
                 }
+            }
+        }
+
+        employeeViewModel.openEmployeeDetailsEvent.observe(viewLifecycleOwner) { employee ->
+            employee?.let {
+                //DODO: use NavController
+                (activity as MainActivity).showEmployee(it)
+                //findNavController().navigate(R.id.fragment_container)
             }
         }
     }

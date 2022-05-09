@@ -41,8 +41,14 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     // Support Design
+    def android_support_version = '1.6.0'
     implementation "com.google.android.material:material:$android_support_version"
     implementation 'androidx.appcompat:appcompat:1.4.1'
+
+    def nav_version = '2.4.2'
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+
 
     // LiveData & ViewModel & Lifecycle
     implementation "androidx.activity:activity-ktx:1.4.0"
