@@ -24,7 +24,7 @@ object DatabaseModule {
     }
 
     @Provides
-    fun provideChannelDao(appDatabase: AppDatabase): EmployeeDao {
+    fun provideEmployeeDao(appDatabase: AppDatabase): EmployeeDao {
         return appDatabase.employeeDao()
     }
 
