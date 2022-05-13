@@ -15,7 +15,7 @@ data class RestObject (
 data class EmployeesRestObject (
     @SerializedName("status"  )
     var status  : String? = "",
-    @SerializedName("data"    )
+    @SerializedName("data")
     var data : ArrayList<Data> = arrayListOf(),
     @SerializedName("message" )
     var message : String? = ""
