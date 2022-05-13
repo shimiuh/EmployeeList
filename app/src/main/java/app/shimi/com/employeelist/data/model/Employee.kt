@@ -16,3 +16,4 @@ data class Employee(
     @ColumnInfo(name = "salary")
     val employee_salary: Int)
 
+

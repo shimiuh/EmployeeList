@@ -54,11 +54,13 @@ object CustomViewBinding {
     }
 
     @BindingAdapter("android:text")
+    @JvmStatic
     fun setText(view: TextView, value: Int) {
         view.text = value.toString()
     }
 
     @InverseBindingAdapter(attribute = "android:text")
+    @JvmStatic
     fun getText(view: TextView): Int {
         return view.text.toString().toIntOrNull() ?: 0
     }
