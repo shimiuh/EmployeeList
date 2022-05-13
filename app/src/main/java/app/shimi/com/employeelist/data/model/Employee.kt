@@ -13,19 +13,10 @@ data class Employee(
     @PrimaryKey
     @ColumnInfo(name = "id")
     val id: Int,
-    @ColumnInfo(name = "employee_name")
+    @ColumnInfo(name = "name")
     val employee_name: String,
-    @ColumnInfo(name = "employee_age")
+    @ColumnInfo(name = "age")
     val employee_age: Int,
-    @ColumnInfo(name = "employee_salary")
+    @ColumnInfo(name = "salary")
     val employee_salary: Int)
 
-@BindingAdapter("android:text")
-fun setText(view: TextView, value: Int) {
-    view.text = value.toString()
-}
-
-@InverseBindingAdapter(attribute = "android:text")
-fun getText(view: TextView): Int {
-    return view.text.toString().toIntOrNull() ?: 0
-}

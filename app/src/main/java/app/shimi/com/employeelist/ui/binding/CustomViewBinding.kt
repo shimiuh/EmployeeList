@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toolbar
 import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseBindingAdapter
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -51,4 +52,15 @@ object CustomViewBinding {
     fun Toolbar.setNavigationOnClickListener(onClickListener: View.OnClickListener) {
         setNavigationOnClickListener(onClickListener)
     }
+
+    @BindingAdapter("android:text")
+    fun setText(view: TextView, value: Int) {
+        view.text = value.toString()
+    }
+
+    @InverseBindingAdapter(attribute = "android:text")
+    fun getText(view: TextView): Int {
+        return view.text.toString().toIntOrNull() ?: 0
+    }
+
 }
