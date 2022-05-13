@@ -1,7 +1,10 @@
 plugins {
+    kotlin("plugin.serialization")
     kotlin("multiplatform")
     kotlin("native.cocoapods")
     id("com.android.library")
+
+
 }
 
 version = "1.0"
@@ -23,20 +26,29 @@ kotlin {
 
 
     sourceSets {
-        val commonMain by getting
-
-        commonMain {
-            dependencies {
-                val coroutinesVersion = "1.5.0-native-mt"
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
-            }
-        }
-
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
+
+        val commonMain by getting {
+            dependencies {
+                val coroutinesVersion = "1.5.0-native-mt"
+
+
+                val serializationVersion = "1.2.2"
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$serializationVersion")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+
+                val ktorVersion = "1.6.1"
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("io.ktor:ktor-client-android:$ktorVersion")
+                implementation("io.ktor:ktor-client-ios:$ktorVersion")
+            }
+        }
+
         val androidMain by getting
         val androidTest by getting
         val iosX64Main by getting
