@@ -3,10 +3,6 @@ package app.shimi.com.employeelist.data.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import android.widget.TextView
-import androidx.databinding.InverseBindingAdapter
-import androidx.databinding.BindingAdapter
-
 
 @Entity(tableName = "Employees")
 data class Employee(
